@@ -26,7 +26,7 @@ public class BodegaController {
     @PostMapping("/bodega")
     public ResponseEntity<BodegaDTO> createBodega(@RequestBody BodegaDTO bodegaDTO) {
         BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity savedBodegaEntity = bodegaService.create(bodegaEntity);
+        BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
         return new ResponseEntity<>(modelMapper.map(savedBodegaEntity, BodegaDTO.class), HttpStatus.CREATED);
     }
 
@@ -35,7 +35,7 @@ public class BodegaController {
 
         List<BodegaDTO> savedBodegas = bodegasDTO.stream().map(bodegaDTO -> {
             BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-            BodegaEntity savedBodegaEntity = bodegaService.create(bodegaEntity);
+            BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
 
             return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
         }).toList();
@@ -49,7 +49,7 @@ public class BodegaController {
 
         List<BodegaDTO> savedBodegas = bodegas.stream().map(bodegaDTO -> {
             BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-            BodegaEntity savedBodegaEntity = bodegaService.create(bodegaEntity);
+            BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
 
             return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
         }).toList();
@@ -85,7 +85,7 @@ public class BodegaController {
 
         bodegaDTO.setCodigo(codigo);
         BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity savedBodegaEntity = bodegaService.create(bodegaEntity);
+        BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
 
         return new ResponseEntity<>(modelMapper.map(savedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
     }

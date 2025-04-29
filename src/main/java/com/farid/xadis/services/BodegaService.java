@@ -15,7 +15,7 @@ public class BodegaService {
         this.bodegaRepository = bodegaRepository;
     }
 
-    public BodegaEntity create(BodegaEntity bodegaEntity) {
+    public BodegaEntity save(BodegaEntity bodegaEntity) {
         return bodegaRepository.save(bodegaEntity);
     }
 
