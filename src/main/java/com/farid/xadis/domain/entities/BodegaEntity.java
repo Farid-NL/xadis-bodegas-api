@@ -1,5 +1,6 @@
 package com.farid.xadis.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -40,7 +41,7 @@ public class BodegaEntity {
 
     private String distrito;
 
-    private int ubigeo_pto;
+    private String ubigeo_pto;
 
     private String direccion_pto;
 
@@ -48,6 +49,6 @@ public class BodegaEntity {
 
     private LocalDate fecha_procesawms;
 
-    private String metro_2;
+    private String metro2;
 
 }
