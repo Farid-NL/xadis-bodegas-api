@@ -5,6 +5,8 @@ import com.farid.xadis.repositories.BodegaRepository;
 import com.farid.xadis.services.BodegaService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BodegaServiceImpl implements BodegaService {
     private final BodegaRepository bodegaRepository;
@@ -16,5 +18,10 @@ public class BodegaServiceImpl implements BodegaService {
     @Override
     public BodegaEntity create(BodegaEntity bodegaEntity) {
         return bodegaRepository.save(bodegaEntity);
+    }
+
+    @Override
+    public List<BodegaEntity> findAll() {
+        return bodegaRepository.findAll();
     }
 }

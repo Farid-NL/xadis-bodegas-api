@@ -7,6 +7,7 @@ import com.farid.xadis.services.BodegaService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,5 +57,13 @@ public class BodegaController {
         }).toList();
 
         return new ResponseEntity<>(savedBodegas, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/bodegas")
+    public ResponseEntity<List<BodegaDTO>> getBodegas() {
+        List<BodegaEntity> bodegas = bodegaService.findAll();
+        List<BodegaDTO> bodegasDTO = bodegas.stream().map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class)).toList();
+
+        return new ResponseEntity<>(bodegasDTO, HttpStatus.OK);
     }
 }
