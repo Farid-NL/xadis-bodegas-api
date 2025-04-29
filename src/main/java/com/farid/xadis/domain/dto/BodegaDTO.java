@@ -1,9 +1,6 @@
-package com.farid.xadis.domain.entities;
+package com.farid.xadis.domain.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,23 +12,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "bodegas")
-public class BodegaEntity {
+public class BodegaDTO {
 
-    @Id
     private String codigo;
 
     private String nombre;
 
-    @Column(length = 1)
     private String activo;
 
     private String documentopto;
 
     private String codigopto;
 
-    @Column(length = 2)
     private String pais;
 
     private String departamento;
@@ -46,6 +38,7 @@ public class BodegaEntity {
 
     private String procesawms;
 
+    @JsonFormat(pattern = "MM/dd/yyyy")
     private LocalDate fecha_procesawms;
 
     private String metro2;
