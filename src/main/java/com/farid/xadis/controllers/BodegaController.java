@@ -31,6 +31,19 @@ public class BodegaController {
         return new ResponseEntity<>(modelMapper.map(savedBodegaEntity, BodegaDTO.class), HttpStatus.CREATED);
     }
 
+    @PostMapping("/bodegas")
+    public ResponseEntity<List<BodegaDTO>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
+
+        List<BodegaDTO> savedBodegas = bodegasDTO.stream().map(bodegaDTO -> {
+            BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
+            BodegaEntity savedBodegaEntity = bodegaService.create(bodegaEntity);
+
+            return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
+        }).toList();
+
+        return new ResponseEntity<>(savedBodegas, HttpStatus.CREATED);
+    }
+
     @PostMapping("/bodegas/data")
     public ResponseEntity<List<BodegaDTO>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
         List<BodegaDTO> bodegas = dataWrapper.getData();
