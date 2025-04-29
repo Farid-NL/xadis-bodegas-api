@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "bodegas")
-public class Bodega {
+public class BodegaEntity {
 
     @Id
     private String codigo;
