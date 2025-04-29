@@ -47,6 +47,7 @@ public class BodegaEntity {
 
     private String procesawms;
 
+    @JsonFormat(pattern = "MM/dd/yyyy")
     private LocalDate fecha_procesawms;
 
     private String metro2;
