@@ -46,4 +46,11 @@ public class BodegaService {
             return bodegaRepository.save(bodegaToBeChanged);
         }).orElse(null);
     }
+
+    public BodegaEntity remove(String codigo) {
+        Optional<BodegaEntity> bodegaEntity = bodegaRepository.findById(codigo);
+        bodegaEntity.ifPresent(bodegaRepository::delete);
+
+        return bodegaEntity.orElse(null);
+    }
 }

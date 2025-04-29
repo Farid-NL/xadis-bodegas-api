@@ -102,4 +102,15 @@ public class BodegaController {
 
         return new ResponseEntity<>(modelMapper.map(updatedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
     }
+
+    @DeleteMapping("/bodega/{codigo}")
+    public ResponseEntity<BodegaDTO> removeBodega(@PathVariable("codigo") String codigo) {
+        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+
+        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        BodegaEntity deletedBodegaEntity = bodegaService.remove(codigo);
+
+        return new ResponseEntity<>(modelMapper.map(deletedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
+    }
 }
