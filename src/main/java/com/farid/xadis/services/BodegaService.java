@@ -26,4 +26,24 @@ public class BodegaService {
     public Optional<BodegaEntity> findById(String codigo) {
         return bodegaRepository.findById(codigo);
     }
+
+    public BodegaEntity partialUpdate(String codigo, BodegaEntity bodegaEntity) {
+
+        return bodegaRepository.findById(codigo).map(bodegaToBeChanged -> {
+            Optional.ofNullable(bodegaEntity.getNombre()).ifPresent(bodegaToBeChanged::setNombre);
+            Optional.ofNullable(bodegaEntity.getActivo()).ifPresent(bodegaToBeChanged::setActivo);
+            Optional.ofNullable(bodegaEntity.getDocumentopto()).ifPresent(bodegaToBeChanged::setDocumentopto);
+            Optional.ofNullable(bodegaEntity.getCodigopto()).ifPresent(bodegaToBeChanged::setCodigopto);
+            Optional.ofNullable(bodegaEntity.getPais()).ifPresent(bodegaToBeChanged::setPais);
+            Optional.ofNullable(bodegaEntity.getDepartamento()).ifPresent(bodegaToBeChanged::setDepartamento);
+            Optional.ofNullable(bodegaEntity.getProvincia()).ifPresent(bodegaToBeChanged::setProvincia);
+            Optional.ofNullable(bodegaEntity.getDistrito()).ifPresent(bodegaToBeChanged::setDistrito);
+            Optional.ofNullable(bodegaEntity.getUbigeo_pto()).ifPresent(bodegaToBeChanged::setUbigeo_pto);
+            Optional.ofNullable(bodegaEntity.getProcesawms()).ifPresent(bodegaToBeChanged::setProcesawms);
+            Optional.ofNullable(bodegaEntity.getFecha_procesawms()).ifPresent(bodegaToBeChanged::setFecha_procesawms);
+            Optional.ofNullable(bodegaEntity.getMetro2()).ifPresent(bodegaToBeChanged::setMetro2);
+
+            return bodegaRepository.save(bodegaToBeChanged);
+        }).orElse(null);
+    }
 }
