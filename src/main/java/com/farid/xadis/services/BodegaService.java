@@ -55,23 +55,27 @@ public class BodegaService {
             .map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class));
     }
 
-    public BodegaEntity partialUpdate(String codigo, BodegaEntity bodegaEntity) {
+    public BodegaDTO partialUpdate(Long id, BodegaDTO bodegaDTO) {
+        bodegaDTO.setId(id);
 
-        return bodegaRepository.findById(codigo).map(bodegaToBeChanged -> {
-            Optional.ofNullable(bodegaEntity.getNombre()).ifPresent(bodegaToBeChanged::setNombre);
-            Optional.ofNullable(bodegaEntity.getActivo()).ifPresent(bodegaToBeChanged::setActivo);
-            Optional.ofNullable(bodegaEntity.getDocumentopto()).ifPresent(bodegaToBeChanged::setDocumentopto);
-            Optional.ofNullable(bodegaEntity.getCodigopto()).ifPresent(bodegaToBeChanged::setCodigopto);
-            Optional.ofNullable(bodegaEntity.getPais()).ifPresent(bodegaToBeChanged::setPais);
-            Optional.ofNullable(bodegaEntity.getDepartamento()).ifPresent(bodegaToBeChanged::setDepartamento);
-            Optional.ofNullable(bodegaEntity.getProvincia()).ifPresent(bodegaToBeChanged::setProvincia);
-            Optional.ofNullable(bodegaEntity.getDistrito()).ifPresent(bodegaToBeChanged::setDistrito);
-            Optional.ofNullable(bodegaEntity.getUbigeo_pto()).ifPresent(bodegaToBeChanged::setUbigeo_pto);
-            Optional.ofNullable(bodegaEntity.getProcesawms()).ifPresent(bodegaToBeChanged::setProcesawms);
-            Optional.ofNullable(bodegaEntity.getFecha_procesawms()).ifPresent(bodegaToBeChanged::setFecha_procesawms);
-            Optional.ofNullable(bodegaEntity.getMetro2()).ifPresent(bodegaToBeChanged::setMetro2);
+        return bodegaRepository.findById(id).map(bodegaEntity -> {
+            Optional.ofNullable(bodegaDTO.getCodigo()).ifPresent(bodegaEntity::setCodigo);
+            Optional.ofNullable(bodegaDTO.getNombre()).ifPresent(bodegaEntity::setNombre);
+            Optional.ofNullable(bodegaDTO.getActivo()).ifPresent(bodegaEntity::setActivo);
+            Optional.ofNullable(bodegaDTO.getDocumentopto()).ifPresent(bodegaEntity::setDocumentopto);
+            Optional.ofNullable(bodegaDTO.getCodigopto()).ifPresent(bodegaEntity::setCodigopto);
+            Optional.ofNullable(bodegaDTO.getPais()).ifPresent(bodegaEntity::setPais);
+            Optional.ofNullable(bodegaDTO.getDepartamento()).ifPresent(bodegaEntity::setDepartamento);
+            Optional.ofNullable(bodegaDTO.getProvincia()).ifPresent(bodegaEntity::setProvincia);
+            Optional.ofNullable(bodegaDTO.getDistrito()).ifPresent(bodegaEntity::setDistrito);
+            Optional.ofNullable(bodegaDTO.getUbigeo_pto()).ifPresent(bodegaEntity::setUbigeo_pto);
+            Optional.ofNullable(bodegaDTO.getProcesawms()).ifPresent(bodegaEntity::setProcesawms);
+            Optional.ofNullable(bodegaDTO.getFecha_procesawms()).ifPresent(bodegaEntity::setFecha_procesawms);
+            Optional.ofNullable(bodegaDTO.getMetro2()).ifPresent(bodegaEntity::setMetro2);
 
-            return bodegaRepository.save(bodegaToBeChanged);
+            BodegaEntity bodegaUpdated = bodegaRepository.save(bodegaEntity);
+
+            return modelMapper.map(bodegaUpdated, BodegaDTO.class);
         }).orElse(null);
     }
 

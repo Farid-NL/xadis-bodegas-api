@@ -154,17 +154,12 @@ public class BodegaController {
             )
         }
     )
-    @PatchMapping("/bodega/{codigo}")
-    public ResponseEntity<BodegaDTO> partialUpdateBodega(@PathVariable("codigo") String codigo, @RequestBody BodegaDTO bodegaDTO) {
-        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+    @PatchMapping("/bodega/{id}")
+    public ResponseEntity<BodegaDTO> partialUpdateBodega(@PathVariable("id") Long id, @RequestBody BodegaDTO bodegaDTO) {
+        Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
-        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        bodegaDTO.setCodigo(codigo);
-        BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity updatedBodegaEntity = bodegaService.partialUpdate(codigo, bodegaEntity);
-
-        return new ResponseEntity<>(modelMapper.map(updatedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
+        return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.partialUpdate(id, bodegaDTO), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Operation(
