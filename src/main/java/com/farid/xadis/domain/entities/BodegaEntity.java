@@ -1,9 +1,6 @@
 package com.farid.xadis.domain.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +13,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Entity
+@SequenceGenerator(name = "id_seq", allocationSize = 1)
 @Table(name = "bodegas")
 public class BodegaEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_seq")
+    private Long id;
+
     private String codigo;
 
     private String nombre;

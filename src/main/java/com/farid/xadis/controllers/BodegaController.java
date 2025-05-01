@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Tag(name = "Bodega Controller", description = "CRUD operations for bodegas schema")
@@ -40,9 +41,7 @@ public class BodegaController {
     )
     @PostMapping("/bodega")
     public ResponseEntity<BodegaDTO> createBodega(@RequestBody BodegaDTO bodegaDTO) {
-        BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-        return new ResponseEntity<>(modelMapper.map(savedBodegaEntity, BodegaDTO.class), HttpStatus.CREATED);
+        return new ResponseEntity<>(bodegaService.save(bodegaDTO), HttpStatus.CREATED);
     }
 
     @Operation(
@@ -56,16 +55,11 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas")
-    public ResponseEntity<List<BodegaDTO>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
+        int savedBodegas = bodegaService.saveAll(bodegasDTO);
+        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
 
-        List<BodegaDTO> savedBodegas = bodegasDTO.stream().map(bodegaDTO -> {
-            BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-            BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-
-            return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
-        }).toList();
-
-        return new ResponseEntity<>(savedBodegas, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -79,17 +73,12 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas/data")
-    public ResponseEntity<List<BodegaDTO>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
         List<BodegaDTO> bodegas = dataWrapper.getData();
+        int savedBodegas = bodegaService.saveAll(bodegas);
+        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
 
-        List<BodegaDTO> savedBodegas = bodegas.stream().map(bodegaDTO -> {
-            BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-            BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-
-            return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
-        }).toList();
-
-        return new ResponseEntity<>(savedBodegas, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -104,10 +93,7 @@ public class BodegaController {
     )
     @GetMapping("/bodegas")
     public ResponseEntity<List<BodegaDTO>> getBodegas() {
-        List<BodegaEntity> bodegas = bodegaService.findAll();
-        List<BodegaDTO> bodegasDTO = bodegas.stream().map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class)).toList();
-
-        return new ResponseEntity<>(bodegasDTO, HttpStatus.OK);
+        return new ResponseEntity<>(bodegaService.findAll(), HttpStatus.OK);
     }
 
     @Operation(
@@ -124,16 +110,12 @@ public class BodegaController {
             )
         }
     )
-    @GetMapping("/bodega/{codigo}")
-    public ResponseEntity<BodegaDTO> getBodega(@PathVariable("codigo") String codigo) {
-        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+    @GetMapping("/bodega/{id}")
+    public ResponseEntity<BodegaDTO> getBodega(@PathVariable("id") Long id) {
+        Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
-        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        BodegaEntity bodegaEntity = bodega.get();
-        BodegaDTO bodegaDTO = modelMapper.map(bodegaEntity, BodegaDTO.class);
-
-        return new ResponseEntity<>(bodegaDTO, HttpStatus.OK);
+        return bodega.map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Operation(
@@ -150,17 +132,12 @@ public class BodegaController {
             )
         }
     )
-    @PutMapping("/bodega/{codigo}")
-    public ResponseEntity<BodegaDTO> fullUpdateBodega(@PathVariable("codigo") String codigo, @RequestBody BodegaDTO bodegaDTO) {
-        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+    @PutMapping("/bodega/{id}")
+    public ResponseEntity<BodegaDTO> fullUpdateBodega(@PathVariable("id") Long id, @RequestBody BodegaDTO bodegaDTO) {
+        Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
-        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        bodegaDTO.setCodigo(codigo);
-        BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-
-        return new ResponseEntity<>(modelMapper.map(savedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
+        return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.save(id, bodegaDTO), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Operation(
@@ -177,17 +154,12 @@ public class BodegaController {
             )
         }
     )
-    @PatchMapping("/bodega/{codigo}")
-    public ResponseEntity<BodegaDTO> partialUpdateBodega(@PathVariable("codigo") String codigo, @RequestBody BodegaDTO bodegaDTO) {
-        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+    @PatchMapping("/bodega/{id}")
+    public ResponseEntity<BodegaDTO> partialUpdateBodega(@PathVariable("id") Long id, @RequestBody BodegaDTO bodegaDTO) {
+        Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
-        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        bodegaDTO.setCodigo(codigo);
-        BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity updatedBodegaEntity = bodegaService.partialUpdate(codigo, bodegaEntity);
-
-        return new ResponseEntity<>(modelMapper.map(updatedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
+        return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.partialUpdate(id, bodegaDTO), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Operation(
@@ -204,14 +176,11 @@ public class BodegaController {
             )
         }
     )
-    @DeleteMapping("/bodega/{codigo}")
-    public ResponseEntity<BodegaDTO> removeBodega(@PathVariable("codigo") String codigo) {
-        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+    @DeleteMapping("/bodega/{id}")
+    public ResponseEntity<BodegaDTO> removeBodega(@PathVariable("id") Long id) {
+        Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
-        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        BodegaEntity deletedBodegaEntity = bodegaService.remove(codigo);
-
-        return new ResponseEntity<>(modelMapper.map(deletedBodegaEntity, BodegaDTO.class), HttpStatus.OK);
+        return bodega.map(bodegaToBeRemoved -> new ResponseEntity<>(bodegaService.remove(id), HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
