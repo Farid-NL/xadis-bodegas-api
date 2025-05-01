@@ -56,15 +56,8 @@ public class BodegaController {
     )
     @PostMapping("/bodegas")
     public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
-
-        List<BodegaDTO> savedBodegas = bodegasDTO.stream().map(bodegaDTO -> {
-            BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-            BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-
-            return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
-        }).toList();
-
-        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas.size());
+        int savedBodegas = bodegaService.saveAll(bodegasDTO);
+        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -82,15 +75,8 @@ public class BodegaController {
     @PostMapping("/bodegas/data")
     public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
         List<BodegaDTO> bodegas = dataWrapper.getData();
-
-        List<BodegaDTO> savedBodegas = bodegas.stream().map(bodegaDTO -> {
-            BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-            BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-
-            return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
-        }).toList();
-
-        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas.size());
+        int savedBodegas = bodegaService.saveAll(bodegas);
+        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

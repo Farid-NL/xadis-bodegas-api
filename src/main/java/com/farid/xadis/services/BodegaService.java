@@ -27,6 +27,15 @@ public class BodegaService {
         return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
     }
 
+    public int saveAll(List<BodegaDTO> bodegasDTO) {
+        List<BodegaEntity> bodegaEntities = bodegasDTO.stream()
+            .map(bodegaDTO -> modelMapper.map(bodegaDTO, BodegaEntity.class))
+            .toList();
+        List<BodegaEntity> savedBodegas = bodegaRepository.saveAll(bodegaEntities);
+
+        return savedBodegas.size();
+    }
+
     public List<BodegaEntity> findAll() {
         return bodegaRepository.findAll();
     }
