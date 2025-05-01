@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Tag(name = "Bodega Controller", description = "CRUD operations for bodegas schema")
@@ -56,7 +57,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas")
-    public ResponseEntity<List<BodegaDTO>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
 
         List<BodegaDTO> savedBodegas = bodegasDTO.stream().map(bodegaDTO -> {
             BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
@@ -65,7 +66,9 @@ public class BodegaController {
             return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
         }).toList();
 
-        return new ResponseEntity<>(savedBodegas, HttpStatus.CREATED);
+        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas.size());
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -79,7 +82,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas/data")
-    public ResponseEntity<List<BodegaDTO>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
         List<BodegaDTO> bodegas = dataWrapper.getData();
 
         List<BodegaDTO> savedBodegas = bodegas.stream().map(bodegaDTO -> {
@@ -89,7 +92,9 @@ public class BodegaController {
             return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
         }).toList();
 
-        return new ResponseEntity<>(savedBodegas, HttpStatus.CREATED);
+        Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas.size());
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(
