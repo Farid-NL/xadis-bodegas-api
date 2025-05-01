@@ -2,13 +2,11 @@ package com.farid.xadis.controllers;
 
 import com.farid.xadis.domain.dto.BodegaDTO;
 import com.farid.xadis.domain.dto.BodegaDataWrapper;
-import com.farid.xadis.domain.entities.BodegaEntity;
 import com.farid.xadis.services.BodegaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +20,8 @@ import java.util.Optional;
 public class BodegaController {
     private final BodegaService bodegaService;
 
-    private final ModelMapper modelMapper;
-
-    public BodegaController(BodegaService bodegaService, ModelMapper modelMapper) {
+    public BodegaController(BodegaService bodegaService) {
         this.bodegaService = bodegaService;
-        this.modelMapper = modelMapper;
     }
 
     @Operation(

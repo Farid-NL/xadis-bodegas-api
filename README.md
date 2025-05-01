@@ -12,9 +12,6 @@
     <img alt="docker-badge" src="https://img.shields.io/badge/docker-1D63ED?style=for-the-badge&logo=docker&logoColor=white">
 </p>
 
-<!-- TOC -->
-<!-- TOC -->
-
 ## Run it locally
 
 You'll need:
