@@ -110,16 +110,12 @@ public class BodegaController {
             )
         }
     )
-    @GetMapping("/bodega/{codigo}")
-    public ResponseEntity<BodegaDTO> getBodega(@PathVariable("codigo") String codigo) {
-        Optional<BodegaEntity> bodega = bodegaService.findById(codigo);
+    @GetMapping("/bodega/{id}")
+    public ResponseEntity<BodegaDTO> getBodega(@PathVariable("id") Long id) {
+        Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
-        if (bodega.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        BodegaEntity bodegaEntity = bodega.get();
-        BodegaDTO bodegaDTO = modelMapper.map(bodegaEntity, BodegaDTO.class);
-
-        return new ResponseEntity<>(bodegaDTO, HttpStatus.OK);
+        return bodega.map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Operation(
