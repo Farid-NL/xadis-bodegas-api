@@ -93,10 +93,7 @@ public class BodegaController {
     )
     @GetMapping("/bodegas")
     public ResponseEntity<List<BodegaDTO>> getBodegas() {
-        List<BodegaEntity> bodegas = bodegaService.findAll();
-        List<BodegaDTO> bodegasDTO = bodegas.stream().map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class)).toList();
-
-        return new ResponseEntity<>(bodegasDTO, HttpStatus.OK);
+        return new ResponseEntity<>(bodegaService.findAll(), HttpStatus.OK);
     }
 
     @Operation(

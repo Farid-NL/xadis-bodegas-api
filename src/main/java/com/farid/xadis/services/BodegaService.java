@@ -36,8 +36,10 @@ public class BodegaService {
         return savedBodegas.size();
     }
 
-    public List<BodegaEntity> findAll() {
-        return bodegaRepository.findAll();
+    public List<BodegaDTO> findAll() {
+        return bodegaRepository.findAll().stream()
+            .map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class))
+            .toList();
     }
 
     public Optional<BodegaEntity> findById(String codigo) {
