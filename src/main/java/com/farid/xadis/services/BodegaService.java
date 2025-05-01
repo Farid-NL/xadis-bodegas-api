@@ -42,8 +42,9 @@ public class BodegaService {
             .toList();
     }
 
-    public Optional<BodegaEntity> findById(String codigo) {
-        return bodegaRepository.findById(codigo);
+    public Optional<BodegaDTO> findById(Long id) {
+        return bodegaRepository.findById(id)
+            .map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class));
     }
 
     public BodegaEntity partialUpdate(String codigo, BodegaEntity bodegaEntity) {
@@ -66,10 +67,12 @@ public class BodegaService {
         }).orElse(null);
     }
 
-    public BodegaEntity remove(String codigo) {
-        Optional<BodegaEntity> bodegaEntity = bodegaRepository.findById(codigo);
-        bodegaEntity.ifPresent(bodegaRepository::delete);
-
-        return bodegaEntity.orElse(null);
+    public BodegaDTO remove(Long id) {
+        return bodegaRepository.findById(id)
+            .map(bodegaEntity -> {
+                bodegaRepository.delete(bodegaEntity);
+                return modelMapper.map(bodegaEntity, BodegaDTO.class);
+            })
+            .orElse(null);
     }
 }

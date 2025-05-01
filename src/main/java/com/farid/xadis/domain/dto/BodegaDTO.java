@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Builder
 public class BodegaDTO {
 
+    private Long id;
+
     @Schema(example = "01")
     private String codigo;
 
