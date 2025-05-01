@@ -1,7 +1,9 @@
 package com.farid.xadis.services;
 
+import com.farid.xadis.domain.dto.BodegaDTO;
 import com.farid.xadis.domain.entities.BodegaEntity;
 import com.farid.xadis.repositories.BodegaRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +13,18 @@ import java.util.Optional;
 public class BodegaService {
     private final BodegaRepository bodegaRepository;
 
-    public BodegaService(BodegaRepository bodegaRepository) {
+    private final ModelMapper modelMapper;
+
+    public BodegaService(BodegaRepository bodegaRepository, ModelMapper modelMapper) {
         this.bodegaRepository = bodegaRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public BodegaEntity save(BodegaEntity bodegaEntity) {
-        return bodegaRepository.save(bodegaEntity);
+    public BodegaDTO save(BodegaDTO bodegaDTO) {
+        BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
+        BodegaEntity savedBodegaEntity = bodegaRepository.save(bodegaEntity);
+
+        return modelMapper.map(savedBodegaEntity, BodegaDTO.class);
     }
 
     public List<BodegaEntity> findAll() {

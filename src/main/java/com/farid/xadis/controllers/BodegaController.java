@@ -41,9 +41,7 @@ public class BodegaController {
     )
     @PostMapping("/bodega")
     public ResponseEntity<BodegaDTO> createBodega(@RequestBody BodegaDTO bodegaDTO) {
-        BodegaEntity bodegaEntity = modelMapper.map(bodegaDTO, BodegaEntity.class);
-        BodegaEntity savedBodegaEntity = bodegaService.save(bodegaEntity);
-        return new ResponseEntity<>(modelMapper.map(savedBodegaEntity, BodegaDTO.class), HttpStatus.CREATED);
+        return new ResponseEntity<>(bodegaService.save(bodegaDTO), HttpStatus.CREATED);
     }
 
     @Operation(
