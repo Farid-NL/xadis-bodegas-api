@@ -187,7 +187,7 @@ public class BodegaController {
         }
     )
     @DeleteMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> removeBodega(@PathVariable("id") Long id) {
+    public ResponseEntity<BodegaDTO> removeBodega(@Valid @Positive @PathVariable("id") Long id) {
         Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
         return bodega.map(bodegaToBeRemoved -> new ResponseEntity<>(bodegaService.remove(id), HttpStatus.OK))
