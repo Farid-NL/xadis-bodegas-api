@@ -165,7 +165,7 @@ public class BodegaController {
         }
     )
     @PatchMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTOPartialUpdate> partialUpdateBodega(@PathVariable("id") Long id, @Valid @RequestBody BodegaDTOPartialUpdate bodegaDTO) {
+    public ResponseEntity<BodegaDTOPartialUpdate> partialUpdateBodega(@Valid @Positive @PathVariable("id") Long id, @Valid @RequestBody BodegaDTOPartialUpdate bodegaDTO) {
         Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
         return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.partialUpdate(id, bodegaDTO), HttpStatus.OK))
