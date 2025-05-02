@@ -80,7 +80,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas/data")
-    public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody BodegaDataWrapper dataWrapper) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(@Valid @RequestBody BodegaDataWrapper dataWrapper) {
         List<BodegaDTO> bodegas = dataWrapper.getData();
         int savedBodegas = bodegaService.saveAll(bodegas);
         Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
