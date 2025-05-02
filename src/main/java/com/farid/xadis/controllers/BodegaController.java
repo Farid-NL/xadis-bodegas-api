@@ -140,7 +140,7 @@ public class BodegaController {
         }
     )
     @PutMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> fullUpdateBodega(@PathVariable("id") Long id, @RequestBody BodegaDTO bodegaDTO) {
+    public ResponseEntity<BodegaDTO> fullUpdateBodega(@PathVariable("id") Long id, @Valid @RequestBody BodegaDTO bodegaDTO) {
         Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
         return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.save(id, bodegaDTO), HttpStatus.OK))
