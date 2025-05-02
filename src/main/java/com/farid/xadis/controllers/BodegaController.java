@@ -1,6 +1,7 @@
 package com.farid.xadis.controllers;
 
 import com.farid.xadis.domain.dto.BodegaDTO;
+import com.farid.xadis.domain.dto.BodegaDTOPartialUpdate;
 import com.farid.xadis.domain.dto.BodegaDataWrapper;
 import com.farid.xadis.services.BodegaService;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -162,7 +163,7 @@ public class BodegaController {
         }
     )
     @PatchMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> partialUpdateBodega(@PathVariable("id") Long id, @RequestBody BodegaDTO bodegaDTO) {
+    public ResponseEntity<BodegaDTOPartialUpdate> partialUpdateBodega(@PathVariable("id") Long id, @Valid @RequestBody BodegaDTOPartialUpdate bodegaDTO) {
         Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
         return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.partialUpdate(id, bodegaDTO), HttpStatus.OK))
