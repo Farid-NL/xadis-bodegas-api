@@ -3,18 +3,24 @@ package com.farid.xadis.controllers;
 import com.farid.xadis.domain.dto.BodegaDTO;
 import com.farid.xadis.domain.dto.BodegaDataWrapper;
 import com.farid.xadis.services.BodegaService;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Validated
 @Tag(name = "Bodega Controller", description = "CRUD operations for bodegas schema")
 @RestController
 public class BodegaController {
@@ -35,7 +41,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodega")
-    public ResponseEntity<BodegaDTO> createBodega(@RequestBody BodegaDTO bodegaDTO) {
+    public ResponseEntity<BodegaDTO> createBodega(@Valid @RequestBody BodegaDTO bodegaDTO) {
         return new ResponseEntity<>(bodegaService.save(bodegaDTO), HttpStatus.CREATED);
     }
 
@@ -177,5 +183,21 @@ public class BodegaController {
 
         return bodega.map(bodegaToBeRemoved -> new ResponseEntity<>(bodegaService.remove(id), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidFormat() {
+        Map<String, String> errors = Map.of("fecha_procesawms", "Invalid format. Use 'MM/dd/yyyy'");
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
