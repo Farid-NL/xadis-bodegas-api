@@ -193,45 +193,4 @@ public class BodegaController {
         return bodega.map(bodegaToBeRemoved -> new ResponseEntity<>(bodegaService.remove(id), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-
-        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidFormat() {
-        Map<String, String> errors = Map.of("fecha_procesawms", "Invalid format. Use 'MM/dd/yyyy'");
-
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-
-        ex.getConstraintViolations().forEach(error -> {
-            String rawPath = error.getPropertyPath().toString();
-
-            String cleanedPath = rawPath.replaceFirst("^.*?\\.", "").replace("bodegasDTO", "bodegas");
-            errors.put(cleanedPath, error.getMessage());
-        });
-
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentTypeMismatchException ex) {
-        String parameterName = ex.getName();
-        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
-        String errorMessage = String.format("Parameter '%s' must be of type '%s'", parameterName, expectedType);
-
-        Map<String, String> error = Map.of(parameterName, errorMessage);
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
 }
