@@ -12,11 +12,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +121,7 @@ public class BodegaController {
         }
     )
     @GetMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> getBodega(@PathVariable("id") Long id) {
+    public ResponseEntity<BodegaDTO> getBodega(@Valid @Positive @PathVariable("id") Long id) {
         Optional<BodegaDTO> bodega = bodegaService.findById(id);
 
         return bodega.map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
@@ -220,5 +222,16 @@ public class BodegaController {
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentTypeMismatchException ex) {
+        String parameterName = ex.getName();
+        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+        String errorMessage = String.format("Parameter '%s' must be of type '%s'", parameterName, expectedType);
+
+        Map<String, String> error = Map.of(parameterName, errorMessage);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
