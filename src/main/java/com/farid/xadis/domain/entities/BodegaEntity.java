@@ -13,12 +13,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Entity
-@SequenceGenerator(name = "id_seq", allocationSize = 1)
 @Table(name = "bodegas")
 public class BodegaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String codigo;
