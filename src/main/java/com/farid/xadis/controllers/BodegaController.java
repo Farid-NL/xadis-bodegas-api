@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -56,7 +58,11 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas")
-    public ResponseEntity<Map<String, Integer>> createBodegas(@RequestBody List<BodegaDTO> bodegasDTO) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(
+        @RequestBody
+        @NotEmpty(message = "Input bodega list cannot be empty")
+        List<@Valid BodegaDTO> bodegasDTO
+    ) {
         int savedBodegas = bodegaService.saveAll(bodegasDTO);
         Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
 
@@ -197,6 +203,20 @@ public class BodegaController {
     @ExceptionHandler(InvalidFormatException.class)
     public ResponseEntity<Map<String, String>> handleInvalidFormat() {
         Map<String, String> errors = Map.of("fecha_procesawms", "Invalid format. Use 'MM/dd/yyyy'");
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getConstraintViolations().forEach(error -> {
+            String rawPath = error.getPropertyPath().toString();
+
+            String cleanedPath = rawPath.replaceFirst("^.*?\\.", "").replace("bodegasDTO", "bodegas");
+            errors.put(cleanedPath, error.getMessage());
+        });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
