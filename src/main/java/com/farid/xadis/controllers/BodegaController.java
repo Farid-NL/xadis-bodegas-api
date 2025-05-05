@@ -117,9 +117,8 @@ public class BodegaController {
     )
     @GetMapping("/bodega/{id}")
     public ResponseEntity<BodegaDTO> getBodega(@Valid @Positive @PathVariable("id") Long id) {
-        Optional<BodegaDTO> bodega = bodegaService.findById(id);
-
-        return bodega.map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
+        return bodegaService.findById(id)
+            .map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -139,9 +138,8 @@ public class BodegaController {
     )
     @PutMapping("/bodega/{id}")
     public ResponseEntity<BodegaDTO> fullUpdateBodega(@Valid @Positive @PathVariable("id") Long id, @Valid @RequestBody BodegaDTO bodegaDTO) {
-        Optional<BodegaDTO> bodega = bodegaService.findById(id);
-
-        return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.save(id, bodegaDTO), HttpStatus.OK))
+        return bodegaService.findById(id)
+            .map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.save(id, bodegaDTO), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -161,9 +159,8 @@ public class BodegaController {
     )
     @PatchMapping("/bodega/{id}")
     public ResponseEntity<BodegaDTOPartialUpdate> partialUpdateBodega(@Valid @Positive @PathVariable("id") Long id, @Valid @RequestBody BodegaDTOPartialUpdate bodegaDTO) {
-        Optional<BodegaDTO> bodega = bodegaService.findById(id);
-
-        return bodega.map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.partialUpdate(id, bodegaDTO), HttpStatus.OK))
+        return bodegaService.partialUpdate(id, bodegaDTO)
+            .map(bodegaDTOPartialUpdate -> new ResponseEntity<>(bodegaDTOPartialUpdate, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -183,9 +180,8 @@ public class BodegaController {
     )
     @DeleteMapping("/bodega/{id}")
     public ResponseEntity<BodegaDTO> removeBodega(@Valid @Positive @PathVariable("id") Long id) {
-        Optional<BodegaDTO> bodega = bodegaService.findById(id);
-
-        return bodega.map(bodegaToBeRemoved -> new ResponseEntity<>(bodegaService.remove(id), HttpStatus.OK))
+        return bodegaService.remove(id)
+            .map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

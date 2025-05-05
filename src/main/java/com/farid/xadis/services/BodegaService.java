@@ -56,10 +56,9 @@ public class BodegaService {
             .map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class));
     }
 
-    public BodegaDTOPartialUpdate partialUpdate(Long id, BodegaDTOPartialUpdate bodegaDTO) {
-        bodegaDTO.setId(id);
-
+    public Optional<BodegaDTOPartialUpdate> partialUpdate(Long id, BodegaDTOPartialUpdate bodegaDTO) {
         return bodegaRepository.findById(id).map(bodegaEntity -> {
+            bodegaDTO.setId(id);
             Optional.ofNullable(bodegaDTO.getCodigo()).ifPresent(bodegaEntity::setCodigo);
             Optional.ofNullable(bodegaDTO.getNombre()).ifPresent(bodegaEntity::setNombre);
             Optional.ofNullable(bodegaDTO.getActivo()).ifPresent(bodegaEntity::setActivo);
@@ -77,15 +76,14 @@ public class BodegaService {
             BodegaEntity bodegaUpdated = bodegaRepository.save(bodegaEntity);
 
             return modelMapper.map(bodegaUpdated, BodegaDTOPartialUpdate.class);
-        }).orElse(null);
+        });
     }
 
-    public BodegaDTO remove(Long id) {
+    public Optional<BodegaDTO> remove(Long id) {
         return bodegaRepository.findById(id)
             .map(bodegaEntity -> {
                 bodegaRepository.delete(bodegaEntity);
                 return modelMapper.map(bodegaEntity, BodegaDTO.class);
-            })
-            .orElse(null);
+            });
     }
 }
