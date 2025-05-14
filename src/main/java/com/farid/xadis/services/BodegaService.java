@@ -1,7 +1,6 @@
 package com.farid.xadis.services;
 
 import com.farid.xadis.domain.dto.BodegaDTO;
-import com.farid.xadis.domain.dto.BodegaDTOPartialUpdate;
 import com.farid.xadis.domain.entities.BodegaEntity;
 import com.farid.xadis.repositories.BodegaRepository;
 import org.modelmapper.ModelMapper;
@@ -56,7 +55,7 @@ public class BodegaService {
             .map(bodegaEntity -> modelMapper.map(bodegaEntity, BodegaDTO.class));
     }
 
-    public Optional<BodegaDTOPartialUpdate> partialUpdate(Long id, BodegaDTOPartialUpdate bodegaDTO) {
+    public Optional<BodegaDTO> partialUpdate(Long id, BodegaDTO bodegaDTO) {
         return bodegaRepository.findById(id).map(bodegaEntity -> {
             bodegaDTO.setId(id);
             Optional.ofNullable(bodegaDTO.getCodigo()).ifPresent(bodegaEntity::setCodigo);
@@ -75,7 +74,7 @@ public class BodegaService {
 
             BodegaEntity bodegaUpdated = bodegaRepository.save(bodegaEntity);
 
-            return modelMapper.map(bodegaUpdated, BodegaDTOPartialUpdate.class);
+            return modelMapper.map(bodegaUpdated, BodegaDTO.class);
         });
     }
 

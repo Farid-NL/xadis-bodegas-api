@@ -15,7 +15,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /* Validation messages from single DTO */
+    /* Validation messages from a single DTO */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -39,10 +39,10 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
 
         ex.getConstraintViolations().forEach(error -> {
-            String rawPath = error.getPropertyPath().toString();
+            String field = error.getPropertyPath().toString();
 
-            String cleanedPath = rawPath.replaceFirst("^.*?\\.", "").replace("bodegasDTO", "bodegas");
-            errors.put(cleanedPath, error.getMessage());
+            String cleanedField = field.replaceFirst("^.*?\\.", "").replace("bodegasDTO", "bodegas");
+            errors.put(cleanedField, error.getMessage());
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);

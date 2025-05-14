@@ -1,9 +1,10 @@
 package com.farid.xadis.controllers;
 
 import com.farid.xadis.domain.dto.BodegaDTO;
-import com.farid.xadis.domain.dto.BodegaDTOPartialUpdate;
 import com.farid.xadis.domain.dto.BodegaDataWrapper;
 import com.farid.xadis.services.BodegaService;
+import com.farid.xadis.validations.groups.OnCreate;
+import com.farid.xadis.validations.groups.OnUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Validated
 @Tag(name = "Bodega Controller", description = "CRUD operations for bodegas schema")
@@ -41,7 +41,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodega")
-    public ResponseEntity<BodegaDTO> createBodega(@Valid @RequestBody BodegaDTO bodegaDTO) {
+    public ResponseEntity<BodegaDTO> createBodega(@Validated(OnCreate.class) @RequestBody BodegaDTO bodegaDTO) {
         return new ResponseEntity<>(bodegaService.save(bodegaDTO), HttpStatus.CREATED);
     }
 
@@ -56,6 +56,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas")
+    @Validated(OnCreate.class)
     public ResponseEntity<Map<String, Integer>> createBodegas(
         @RequestBody
         @NotEmpty(message = "Input bodega list cannot be empty")
@@ -78,7 +79,7 @@ public class BodegaController {
         }
     )
     @PostMapping("/bodegas/data")
-    public ResponseEntity<Map<String, Integer>> createBodegas(@Valid @RequestBody BodegaDataWrapper dataWrapper) {
+    public ResponseEntity<Map<String, Integer>> createBodegas(@Validated(OnCreate.class) @RequestBody BodegaDataWrapper dataWrapper) {
         List<BodegaDTO> bodegas = dataWrapper.getData();
         int savedBodegas = bodegaService.saveAll(bodegas);
         Map<String, Integer> response = Map.of("saved_bodegas", savedBodegas);
@@ -116,7 +117,7 @@ public class BodegaController {
         }
     )
     @GetMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> getBodega(@Valid @Positive @PathVariable("id") Long id) {
+    public ResponseEntity<BodegaDTO> getBodega(@Positive @PathVariable("id") Long id) {
         return bodegaService.findById(id)
             .map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -137,7 +138,10 @@ public class BodegaController {
         }
     )
     @PutMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> fullUpdateBodega(@Valid @Positive @PathVariable("id") Long id, @Valid @RequestBody BodegaDTO bodegaDTO) {
+    public ResponseEntity<BodegaDTO> fullUpdateBodega(
+        @Positive @PathVariable("id") Long id,
+        @Validated(OnUpdate.class) @RequestBody BodegaDTO bodegaDTO
+    ) {
         return bodegaService.findById(id)
             .map(bodegaToBeUpdated -> new ResponseEntity<>(bodegaService.save(id, bodegaDTO), HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -158,9 +162,13 @@ public class BodegaController {
         }
     )
     @PatchMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTOPartialUpdate> partialUpdateBodega(@Valid @Positive @PathVariable("id") Long id, @Valid @RequestBody BodegaDTOPartialUpdate bodegaDTO) {
+    @Validated(OnUpdate.class)
+    public ResponseEntity<BodegaDTO> partialUpdateBodega(
+        @Positive @PathVariable("id") Long id,
+        @Validated(OnUpdate.class) @RequestBody BodegaDTO bodegaDTO
+    ) {
         return bodegaService.partialUpdate(id, bodegaDTO)
-            .map(bodegaDTOPartialUpdate -> new ResponseEntity<>(bodegaDTOPartialUpdate, HttpStatus.OK))
+            .map(bodegaUpdated -> new ResponseEntity<>(bodegaUpdated, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -179,7 +187,7 @@ public class BodegaController {
         }
     )
     @DeleteMapping("/bodega/{id}")
-    public ResponseEntity<BodegaDTO> removeBodega(@Valid @Positive @PathVariable("id") Long id) {
+    public ResponseEntity<BodegaDTO> removeBodega(@Positive @PathVariable("id") Long id) {
         return bodegaService.remove(id)
             .map(bodegaDTO -> new ResponseEntity<>(bodegaDTO, HttpStatus.OK))
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
