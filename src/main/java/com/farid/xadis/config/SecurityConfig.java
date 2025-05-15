@@ -18,10 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final ApiKeyProperties apiKeyProperties;
+    private final ApiKeyAuthFilter apiKeyAuthFilter;
 
     public SecurityConfig(ApiKeyProperties apiKeyProperties) {
-        this.apiKeyProperties = apiKeyProperties;
+        this.apiKeyAuthFilter = new ApiKeyAuthFilter(apiKeyProperties.getKey());
     }
 
     @Bean
@@ -32,10 +32,9 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(registry -> registry
-                .requestMatchers("/").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new ApiKeyAuthFilter(apiKeyProperties.getKey()), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
